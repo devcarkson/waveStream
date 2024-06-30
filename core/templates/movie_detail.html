@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+
+{% block title %}movie_detail {% endblock %}
+{% load static %}
+{% block content %}
+
+<script type="text/javascript">
+	atOptions = {
+		'key' : '4c501da663ca47e30e99953df5214ef1',
+		'format' : 'iframe',
+		'height' : 600,
+		'width' : 160,
+		'params' : {}
+	};
+</script>
+<script type="text/javascript" src="//www.topcreativeformat.com/4c501da663ca47e30e99953df5214ef1/invoke.js"></script>
+
+<style>
+    html {
+        scroll-behavior: smooth;
+    }
+    .watch-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        {% comment %} background-color: #ff0000; {% endcomment %}
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+    }
+    .watch-btn:hover {
+        {% comment %} background-color: #cc0000; {% endcomment %}
+    }
+    .watch-btn i {
+        margin-right: 10px;
+    }
+    .container-fluid {
+        padding: 2rem 0;
+    }
+    .embed-responsive {
+        position: relative;
+        display: block;
+        width: 100%;
+        padding: 0;
+        overflow: hidden;
+    }
+    .embed-responsive::before {
+        display: block;
+        content: '';
+    }
+    .embed-responsive-16by9::before {
+        padding-top: 56.25%;
+    }
+    .embed-responsive-item {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+    /* Medium devices (tablets, 768px and up) */
+    @media (max-width: 1024px) and (min-width: 390px){
+        .play-movie {
+            bottom: 15rem;
+            right: 5rem;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+        }
+        .play-text {
+            bottom:40%
+            {% comment %} display: none; {% endcomment %}
+    }
+    
+}
+
+@media (max-width: 452px){
+    .play-movie {
+        {% comment %} bottom: -900%;
+        left: 25rem;
+        width: 40px;
+        height: 40px;
+        font-size: 20px; {% endcomment %}
+    }
+    .play-text {
+        background:red;
+        color:red;
+        position: absolute;
+        top: 7em;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1px;
+        z-index: 1;
+    }
+    
+}
+    
+    
+</style>
+    <div>
+    
+    
+    <div>
+    <!-- Play Movie Container -->
+    <div class="play-container container" style="margin-top:5em;">
+        <!-- Play Image -->
+        <img src="{{ movies.image.url}}" alt="" class="play-img">
+        <!-- Play Text -->
+        <div class="play-text">
+            {% comment %} <h2>{{ movies.name}}</h2> {% endcomment %}
+            <!-- Ratings -->
+            <div class="rating">
+                <i class='bx bxs-star'></i>
+                <i class='bx bxs-star'></i>
+                <i class='bx bxs-star'></i>
+                <i class='bx bxs-star'></i>
+                <i class='bx bxs-star-half'></i>
+            </div>
+            <!-- Tags -->
+            <div class="tags">
+                <span>{{ movies.tag1 }}</span>
+                <span>{{ movies.tag2 }}</span>
+                <span>{{ movies.tag3 }}</span>
+            </div>
+            <!-- Trailer Button -->
+            <a href="#trailer-section" class="watch-btn">
+                <i class='bx bx-right-arrow'></i>
+                <span>Watch Trailer</span>
+            </a>            
+        </div>
+        <!-- Play Btn -->
+        <i class='bx bx-right-arrow play-movie' ></i>
+        <!-- Video Container -->
+        <div class="video-container">
+            <!-- Video-Box -->
+            <div class="video-box">
+                <video id="myvideo" src="{{movies.video.url}}" controls></video>
+                <i class='bx bx-x close-video'></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- About -->
+    <div class="about-movie container">
+        <h2>{{movies.name}}</h2>
+        <p>{{ movies.description }}</p>
+        <!-- Movie Cast -->
+        <h2 class="cast-heading">Movie Cast</h2>
+        <div class="cast">
+            {% for i in casts %}
+            <div class="cast-box">
+                <img src="{{ i.image.url }}" alt="{{ i.name }}" class="cast-img">
+                <span class="cast-title">{{ i.name }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Trailer Section Start -->
+    <div id="trailer-section" class="container-fluid py-5">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="section-title text-center position-relative mb-5">
+                        <h1 class="display-4">Watch the Trailer</h1>
+                    </div>
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <iframe id="trailer-iframe" class="embed-responsive-item" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Trailer Section End -->
+    
+    
+    <!-- Download Section -->
+    {% if movies.video %}
+    <div class="download">
+        <div class="download-links">
+            <a style="margin-right:-6em;" href="{{ movies.video.url }}" download="{{ movies.name }}">Download</a>
+        </div>
+    </div>
+    {% endif %}
+
+    <section class="movies container" id="movies">
+        <!-- Heading -->
+        <div class="heading">
+            <h2 class="heading-title">Recommended</h2>
+        </div>
+        <!-- Movies Content -->
+        <div class="movies-content">
+            <!-- Movies Box 1 -->
+            {% for related_movie in related_movies %}
+                <div class="movie-box">
+                    <img src="{{ related_movie.image.url }}" alt="{{ related_movie.name }}" class="movie-box-img">
+                    <div class="box-text">
+                        <h2 class="movie-title">{{ related_movie.name }}</h2>
+                        <span class="movie-type">{{ related_movie.tag1 }}</span>
+                        <a href="{% url 'movie_detail' slug=related_movie.slug %}" class="watch-btn play-btn">
+                            <i class='bx bx-right-arrow main-page'></i>
+                        </a>
+                        <i class="favorite-icon far fa-heart" data-movie-id="{{ i.id }}"></i>
+                    </div>
+                </div>
+            {% endfor %}
+               
+        </div>
+    </section>
+    <!-- Movie Section End -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const favoriteIcons = document.querySelectorAll('.favorite-icon');
+        
+            favoriteIcons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    const movieId = this.getAttribute('data-movie-id');
+                    
+                    fetch("{% url 'toggle_favorite' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                        body: JSON.stringify({ movie_id: movieId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'added') {
+                            this.classList.add('favorited');
+                        } else {
+                            this.classList.remove('favorited');
+                        }
+                    });
+                });
+            });
+        });
+        </script>
+        
+        <style>
+        .favorite-icon {
+            font-size: 40px;
+            color: gold;
+            cursor: pointer;
+            margin-top: 600px;
+        }
+        
+        .favorite-icon.favorited {
+            color: red;
+        }
+        </style>
+ 
+    {% endblock %}

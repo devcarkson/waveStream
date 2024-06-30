@@ -1,0 +1,166 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="carkson" name="keywords">
+    <meta content="carkson" name="description">
+    <title>{% block title %}{% endblock %}</title>
+    <!--style-->
+    <link rel="stylesheet" href="{% static "css/styles.css" %}">
+    <!-- link swiper Css -->
+    <link rel="stylesheet" href="{% static "css/swiper-bundle.min.css" %}">
+    <!-- Fav Icon -->
+    <link rel="shortcut icon" href="{% static "img/fav-icon.png" %}" type="image/x-icon">
+    
+    <!-- Box Icon -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!--fontawsome-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        .swiper-container {
+            width: 100%;
+        }
+    
+        .swiper-wrapper {
+            display: flex;
+        }
+    
+        .swiper-slide {
+            flex: 0 0 auto; /* Ensure the slide does not shrink */
+            width: 100%; /* Each slide takes the full width of the container */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    
+        .movie-box {
+            position: relative;
+            width: 100%; /* Full width of the container */
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    
+        .movie-box-img {
+            width: 100%;
+            height: auto; /* Ensure the image covers the full height of the container */
+            object-fit: cover; /* Cover the container without distorting the image */
+            display: block;
+        }
+    
+        .box-text {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
+    
+        .movie-title {
+            font-size: 18px;
+            margin: 0;
+        }
+    
+        .movie-type {
+            font-size: 14px;
+        }
+    
+        .watch-btn {
+            display: inline-block;
+            margin-top: 10px;
+            color: white;
+        }
+    </style>
+    
+    
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header>
+        <!-- ================Nav================== -->
+        <div class="nav container">
+            <!-- =======================Logo =====================-->
+            <a href="{% url "index" %}" class="logo">
+                Wave<span>Stream</span>
+            </a>
+            <!--==================== Search Box ================-->
+        
+            <div class="search-box">
+                <form method="GET" action="{% url 'search' %}" style="display:flex;">
+                    <input type="search" name="query" id="search-input" placeholder="Search movie" value="{{ query }}">
+                    <button type="submit" class="search-button">
+                        <i class="bx bx-search"></i>
+                    </button>
+                </form>
+            </div>
+
+            
+            <!--================= User========================== -->
+            <a href="#" class="user">
+                <img src="{% static "img/user.jpg" %}" alt="" class="user-img">
+            </a>
+            <!-- =============NavBar================ -->
+            <div class="navbar">
+                <a href="{% url "index" %}" class="nav-link nav-active">
+                    <i class='bx bx-home'></i>
+                    <span class="nav-link-title">Home</span>
+                </a>
+                <a href="{% url "nollywood" %}" class="nav-link">
+                    <i class='bx bxs-hot'></i>
+                    <span class="nav-link-title">NollyWood</span>
+                </a>
+                <a href="{% url "series" %}" class="nav-link">
+                    <i class='bx bx-compass'></i>
+                    <span class="nav-link-title">Series</span>
+                </a>
+                <a href="{% url "movies" %}" class="nav-link">
+                    <i class='bx bx-tv'></i>
+                    <span class="nav-link-title">Movies</span>
+                </a>
+                <a href="{% url "favorite_movies" %}" class="nav-link">
+                    <i class='bx bx-heart'></i>
+                    <span class="nav-link-title">Favorite</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+ 
+
+   <!-- Copyright -->
+   <div class="copyright">
+    <p>&#169; <span>WaveStream </span>All Right Reserved</p>
+    </div>
+
+
+    <!-- link Swiper js -->
+    <script src="{% static "js/swiper-bundle.min.js" %}"></script>
+
+    <!-- link to js custom -->
+    <script src="{% static "js/script.js" %}"></script>
+
+    <script>
+        // JavaScript to set the YouTube embed URL
+        document.addEventListener('DOMContentLoaded', function () {
+            var videoUrl = "{{ movies.trailer }}";
+            var videoId = videoUrl.split('v=')[1];
+            var ampersandPosition = videoId.indexOf('&');
+            if (ampersandPosition !== -1) {
+                videoId = videoId.substring(0, ampersandPosition);
+            }
+            var embedUrl = 'https://www.youtube.com/embed/' + videoId;
+            document.getElementById('trailer-iframe').src = embedUrl;
+        });
+    </script>
+</body>
+</html>
+

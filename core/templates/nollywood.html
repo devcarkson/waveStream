@@ -1,0 +1,177 @@
+
+{% extends 'base.html' %}
+
+{% block title %}Home {% endblock %}
+{% load static %}
+{% block content %}
+<section class="movies container" id="movies" style="margin-top:5em">
+    <!-- Heading -->
+    <div class="heading">
+        <h2 class="heading-title">Nigerian Movies</h2>
+    </div>
+    <!-- Movies Content -->
+    <div class="movies-content">
+        {% for i in nolly %}
+        <div class="movie-box">
+            <img src="{{ i.image.url }}" alt="{{ i.name }}" class="movie-box-img">
+            <div class="box-text">
+                <h2 class="movie-title">{{ i.name }}</h2>
+                <span class="movie-type">{{ i.tag1 }} {{ i.tag2 }} {{ i.tag3 }}</span>
+                <a href="{% url 'movie_detail' slug=i.slug %}" class="watch-btn play-btn">
+                    <i class='bx bx-right-arrow main-page'></i>
+                </a>
+                <i class="favorite-icon far fa-heart" data-movie-id="{{ i.id }}"></i>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+<div class="next-page">
+    <span class="step-links">
+        {% if page_o.has_previous %}
+            <a class="next-btn" href="?page={{ page_o.previous_page_number }}">previous</a>
+        {% endif %}
+
+        {% if page_o.has_next %}
+            <a class="next-btn" href="?page={{ page_o.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const favoriteIcons = document.querySelectorAll('.favorite-icon');
+    
+        favoriteIcons.forEach(icon => {
+            icon.addEventListener('click', function() {
+                const movieId = this.getAttribute('data-movie-id');
+                
+                fetch("{% url 'toggle_favorite' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                    },
+                    body: JSON.stringify({ movie_id: movieId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'added') {
+                        this.classList.add('favorited');
+                    } else {
+                        this.classList.remove('favorited');
+                    }
+                });
+            });
+        });
+    });
+    </script>
+    
+    <style>
+    .favorite-icon {
+        font-size: 24px;
+        color: gold;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    
+    .favorite-icon.favorited {
+        color: red; /* Change color to indicate favorited */
+    }
+    </style>
+{% endblock %}
+
+
+
+{% comment %} {% extends 'base.html' %}
+
+{% block title %}Home {% endblock %}
+{% load static %}
+{% block content %}
+    
+    
+    <!-- Movie Section Start -->
+    <section class="movies container" id="movies" style="margin-top:5em">
+        <!-- Heading -->
+        <div class="heading">
+            <h2 class="heading-title">Nigerian Movie</h2>
+        </div>
+        <!-- Movies Content -->
+        <div class="movies-content">
+            <!-- Movies Box 1 -->
+            {% for i in nolly %}
+            <div class="movie-box">
+                <img src="{{ i.image.url }}" alt="{{ i.name }}" class="movie-box-img">
+                <div class="box-text">
+                    <h2 class="movie-title">{{ i.name }}</h2>
+                    <span class="movie-type">{{ i.tag }}</span>
+                    <a href="{% url 'movie_detail' slug=i.slug %}" class="watch-btn play-btn">
+                        <i class='bx bx-right-arrow main-page'></i>
+                    </a>
+                    <i class="favorite-icon" data-movie-id="{{ i.id }}">&#9733;</i> <!-- Star icon -->
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    <!-- Movie Section End -->
+    
+    <div class="next-page">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a class="next-btn" href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            {% if page_obj.has_next %}
+                <a class="next-btn" href="?page={{ page_obj.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const favoriteIcons = document.querySelectorAll('.favorite-icon');
+    
+            favoriteIcons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    const movieId = this.getAttribute('data-movie-id');
+                    
+                    fetch("{% url 'toggle_favorite' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                        body: JSON.stringify({ movie_id: movieId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'added') {
+                            this.classList.add('favorited');
+                        } else {
+                            this.classList.remove('favorited');
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+    
+    <style>
+        .favorite-icon {
+            font-size: 24px;
+            color: gold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    
+        .favorite-icon.favorited {
+            color: red; /* Change color to indicate favorited */
+        }
+    </style>
+
+{% endblock %}
+ {% endcomment %}
+
+

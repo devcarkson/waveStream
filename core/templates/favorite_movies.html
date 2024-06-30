@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Favorite {% endblock %}
+{% load static %}
+{% block content %}
+<section class="movies container" id="movies" style="margin-top:5em">
+    <!-- Heading -->
+    <div class="heading">
+        <h2 class="heading-title">Favorite Movies</h2>
+    </div>
+    <!-- Movies Content -->
+    <div class="movies-content">
+        {% for movie in favorite_movies %}
+        <div class="movie-box">
+            <img src="{{ movie.image.url }}" alt="{{ movie.name }}" class="movie-box-img">
+            <div class="box-text">
+                <h2 class="movie-title">{{ movie.name }}</h2>
+                <span class="movie-type">{{ movie.tag1 }} {{ movie.tag2 }} {{ movie.tag3 }}</span>
+                <a href="{% url 'movie_detail' slug=movie.slug %}" class="watch-btn play-btn">
+                    <i class='bx bx-right-arrow main-page'></i>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

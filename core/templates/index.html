@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block title %}Home {% endblock %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+</section> {% endcomment %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const homeMovies = {{ movies_json|safe }};
+        let currentIndex = 0;
+
+        function updateMovie() {
+            const movie = homeMovies[currentIndex];
+            const imageUrl = movie.image_url;
+            const imageElement = document.querySelector('.play-img');
+            const titleElement = document.querySelector('.home-title');
+            const tagsElement = document.querySelector('.tags');
+            const watchBtnElement = document.querySelector('.watch-btn');
+
+            imageElement.src = imageUrl;
+            imageElement.alt = movie.name;
+            titleElement.textContent = movie.name;
+
+            // Update the tags
+            tagsElement.innerHTML = `
+                <span>${movie.tag1}</span>
+                <span>${movie.tag2}</span>
+                <span>${movie.tag3}</span>
+            `;
+
+            // Update the video
+            watchBtnElement.href = '{% url "movie_detail" slug="movie_slug_placeholder" %}'.replace('movie_slug_placeholder', movie.slug);
+
+            currentIndex = (currentIndex + 1) % homeMovies.length;
+        }
+
+        updateMovie();
+        setInterval(updateMovie, 2000);
+    });
+</script>
+
+<div class="play-container container" style="margin-top:5em;">
+    <!-- Play Image -->
+    <img src="" alt="" class="play-img">
+    <!-- Play Text -->
+    <div class="play-text">
+        <h1 class="home-title"></h1>
+        <!-- Ratings -->
+        <div class="rating">
+            <i class='bx bxs-star'></i>
+            <i class='bx bxs-star'></i>
+            <i class='bx bxs-star'></i>
+            <i class='bx bxs-star'></i>
+            <i class='bx bxs-star-half'></i>
+        </div>
+        <!-- Tags -->
+        <div class="tags">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <!-- Trailer Button -->
+        <a href="#trailer-section" class="watch-btn">
+            <i class='bx bx-right-arrow'></i>
+            <span>Watch Trailer</span>
+        </a>            
+    </div>
+</div>
+   
+
+    <!-- Home section end -->
+
+    <!-- popular section start -->
+    <section class="popular container" id="popular">
+        <!-- heading-->
+        <div class="heading">
+            <h2 class="heading-title">Popular Movies</h2>
+            <!-- swiper buttons -->
+            <div class="swiper-btn">
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+        </div>
+        <!-- content -->
+        <div class="popular-content swiper">
+            <div class="swiper-wrapper">
+                <!-- Movies Box 1 -->
+            {% for movie in movies %}
+                <div class="swiper-slide">
+                    <div class="movie-box">
+                        <img src="{{ movie.image.url }}" alt="{{ movie.name }}" class="movie-box-img">
+                        <div class="box-text">
+                            <h2 class="movie-title">{{ movie.name }}</h2>
+                            <span class="movie-type">{{ movie.tag1 }}</span>
+                            <a href="{% url 'movie_detail' slug=movie.slug %}" class="watch-btn play-btn">
+                                <i class='bx bx-right-arrow main-page'></i>
+                            </a>
+                            <i class="favorite-icon far fa-heart" data-movie-id="{{ i.id }}"></i>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            </div>
+
+        </div>
+    </section>
+        <!-- Popular Section End -->
+        
+    <!-- Movie Section Start -->
+    <section class="movies container" id="movies">
+        <!-- Heading -->
+        <div class="heading">
+            <h2 class="heading-title">Movies And Shows</h2>
+        </div>
+        <!-- Movies Content -->
+        <div class="movies-content">
+            <!-- Movies Box 1 -->
+            {% for i in page_obj %}
+            <div class="movie-box">
+                <img src="{{ i.image.url }}" alt="{{ i.name }}" class="movie-box-img">
+                {% comment %} <img src="{{ i.image.url}}" alt="" class="movie-box-img"> {% endcomment %}
+                <div class="box-text">
+                    <h2 class="movie-title">{{ i.name}}</h2>
+                    <span class="movie-type">{{ i.tag}}</span>
+                    <a href="{% url 'movie_detail' slug=i.slug %}" class="watch-btn play-btn">
+                        <i class='bx bx-right-arrow main-page'></i>
+                    </a>
+                    <i class="favorite-icon far fa-heart" data-movie-id="{{ i.id }}"></i>
+                </div>
+            </div>
+            {% endfor %}
+             
+        </div>
+    </section>
+    <!-- Movie Section End -->
+    
+    <div class="next-page">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a class="next-btn" href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            {% if page_obj.has_next %}
+                <a class="next-btn" href="?page={{ page_obj.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div>
+
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const favoriteIcons = document.querySelectorAll('.favorite-icon');
+        
+            favoriteIcons.forEach(icon => {
+                icon.addEventListener('click', function() {
+                    const movieId = this.getAttribute('data-movie-id');
+                    
+                    fetch("{% url 'toggle_favorite' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                        body: JSON.stringify({ movie_id: movieId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'added') {
+                            this.classList.add('fas'); // Solid heart
+                            this.classList.remove('far'); // Outline heart
+                        } else {
+                            this.classList.add('far'); // Outline heart
+                            this.classList.remove('fas'); // Solid heart
+                        }
+                    });
+                });
+            });
+        });
+        </script>
+        
+        <style>
+        .favorite-icon {
+            font-size: 24px;
+            color: gold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .favorite-icon.fas {
+            color: red; /* Change color to indicate favorited */
+        }
+        </style>
+        
+        <style>
+        .favorite-icon {
+            font-size: 30px;
+            color: yellow;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .favorite-icon.favorited {
+            color: red;
+        }
+        </style>
+{% endblock %}
